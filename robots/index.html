@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>animation</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Alfa+Slab+One&family=Bayon&family=BBH+Bartle&family=Coda+Caption:wght@800&family=Freeman&display=swap" rel="stylesheet">
+</head>
+<body class="robots">
+
+  <nav class="about-nav">
+    <a href="../index.html">About</a>
+    <a href="../love/index.html">Love</a>
+    <a href="../death/index.html">Death</a>
+  </nav>
+
+  <div id="robot-sketch" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;"></div>
+
+  <script src="../js/p5.min-2.js"></script>
+  <script>
+document.fonts.ready.then(() => {
+  new p5(function(p) {
+    let W, H, CX, CY, SC;
+    let letters = [];
+    let progress = 0;
+
+    const DEG = Math.PI / 180;
+
+    function buildLetters() {
+      W = window.innerWidth;
+      H = window.innerHeight;
+      CX = W / 2;
+      CY = H / 2;
+
+      // reference file size: 1728 x 1117
+      SC = Math.min(W / 1728, H / 1117);
+
+      const bigSz = 250 * SC;
+      const charW = bigSz * 1.1;
+      const wordX0 = CX - (charW * 6) / 2 + charW * 0.5;
+      const wordY = CY;
+
+      function sx(x) {
+        return CX + (x - 864) * SC;
+      }
+
+      function sy(y) {
+        return CY + (y - 558.5) * SC;
+      }
+
+      letters = [
+  {
+    ch: 'R',
+    font: 'Archivo Black',
+    ax: sx(920),
+    ay: sy(590),
+    aRot: 0,
+    aSz: 390 * SC,
+    bx: wordX0 + charW * 0 + 90 * SC,
+    by: wordY,
+    bRot: 0,
+    bSz: 250 * SC,
+  },
+
+  {
+    ch: 'o',
+    font: 'BBH Bartle',
+    ax: sx(700),
+    ay: sy(600),
+    aRot: -55 * DEG,
+    aSz: 250 * SC,
+    bx: wordX0 + charW * 1 + 80 * SC,
+    by: wordY,
+    bRot: 0,
+    bSz: 250 * SC,
+  },
+
+  {
+    ch: 'B',
+    font: 'Bayon',
+    ax: sx(875),
+    ay: sy(410),
+    aRot: 90 * DEG,
+    aSz: 240 * SC,
+    bx: wordX0 + charW * 2 + 70 * SC,
+    by: wordY + 30 * SC,
+    bRot: 0,
+    bSz: 265 * SC,
+  },
+
+  {
+    ch: 'O',
+    font: 'Alfa Slab One',
+    ax: sx(1180),
+    ay: sy(620),
+    aRot: -10 * DEG,
+    aSz: 125 * SC,
+    bx: wordX0 + charW * 3,
+    by: wordY + 10 * SC,
+    bRot: 0,
+    bSz: 250 * SC,
+  },
+
+  {
+    ch: 'T',
+    font: 'Coda Caption',
+    ax: sx(560),
+    ay: sy(660),
+    aRot: -90 * DEG,
+    aSz: 210 * SC,
+    bx: wordX0 + charW * 4 - 80 * SC,
+    by: wordY + 10 * SC,
+    bRot: 0,
+    bSz: 250 * SC,
+  },
+
+  {
+    ch: 'S',
+    font: 'Freeman',
+    ax: sx(1080),
+    ay: sy(570),
+    aRot: -35 * DEG,
+    aSz: 235 * SC,
+    bx: wordX0 + charW * 5 - 180 * SC,
+    by: wordY,
+    bRot: 0,
+    bSz: 250 * SC,
+  },
+];
+    }
+
+    function easeInOut(t) {
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    }
+
+    function letterProgress(i) {
+      let start = i * 0.06;
+      let raw = (progress - start) / (0.55 - start);
+      return easeInOut(p.constrain(raw, 0, 1));
+    }
+
+    p.setup = function() {
+      buildLetters();
+      let cnv = p.createCanvas(W, H);
+      cnv.parent('robot-sketch');
+    };
+
+    p.draw = function() {
+      p.background(47, 71, 71);
+
+      let target = p.constrain(p.mouseY / H, 0, 1);
+      progress = p.lerp(progress, target, 0.07);
+
+      for (let i = 0; i < letters.length; i++) {
+        let lt = letters[i];
+        let t = letterProgress(i);
+
+        let cx = p.lerp(lt.ax, lt.bx, t);
+        let cy = p.lerp(lt.ay, lt.by, t);
+        let rot = p.lerp(lt.aRot, lt.bRot, t);
+        let sz = p.lerp(lt.aSz, lt.bSz, t);
+
+        p.push();
+        p.translate(cx, cy);
+        p.rotate(rot);
+        p.textFont(lt.font);
+        p.textSize(sz);
+        p.textAlign(p.CENTER, p.CENTER);
+        p.fill(255);
+        p.noStroke();
+        p.text(lt.ch, 0, 0);
+        p.pop();
+      }
+    };
+
+    p.windowResized = function() {
+      buildLetters();
+      p.resizeCanvas(W, H);
+    };
+  });
+});
+</script>
+
+</body>
+</html>

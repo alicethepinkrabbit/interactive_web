@@ -1,0 +1,151 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>animation</title>
+    <link rel="stylesheet" href="../style.css">
+
+    <script src="../js/p5.min-2.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="death">
+    <nav class="about-nav">
+        <a href="../index.html">About</a>
+        <a href="../love/index.html">Love</a>
+        <a href="../robots/index.html">Robots</a>
+    </nav>
+        <script>
+  // ─── SOURCE DIMENSIONS ──────────────────────────────────────────────────────
+  const SW = 1728, SH = 1117;
+  const DESIGN_X1 = 325,  DESIGN_X2 = 1400;
+  const DESIGN_Y1 = 452,  DESIGN_Y2 = 647;
+  const DESIGN_CX = (DESIGN_X1 + DESIGN_X2) / 2;
+  const DESIGN_CY = (DESIGN_Y1 + DESIGN_Y2) / 2;
+
+  // ─── SVG PATHS ──────────────────────────────────────────────────────────────
+  const PATH_SHADOW = "M426.217 606H438.717V493.75H426.217V452.5H527.717C555.55 452.5 577.633 460.167 593.967 475.5C610.467 490.667 618.717 515.417 618.717 549.75C618.717 584.083 610.467 608.917 593.967 624.25C577.633 639.417 555.55 647 527.717 647H426.217V606ZM523.217 606C528.883 606 533.133 604.5 535.967 601.5C538.8 598.5 540.217 593.833 540.217 587.5V512C540.217 499.667 534.55 493.5 523.217 493.5H508.717V606H523.217ZM627.145 647V606H639.645V493.5H627.145V452.5H795.895V528H739.895V493.5H709.645V533H731.645V561.5H709.645V606H739.895V566.5H795.895V647H627.145ZM988.867 606H998.867V647H900.867V606H915.867L911.867 586H877.867L873.867 606H888.867V647H803.367V606H813.367L855.617 452.5H946.617L988.867 606ZM883.367 559.5H906.367L896.117 509.75H893.617L883.367 559.5ZM1163.25 513H1120.25V493.5H1104.25V606H1121.75V647H1016.75V606H1034.25V493.5H1018.25V513H975.254V452.5H1163.25V513ZM1371.82 493.5H1359.32V606H1371.82V647H1277.32V606H1289.32V564.75H1254.32V606H1266.32V647H1171.82V606H1184.32V493.5H1171.82V452.5H1266.32V493.5H1254.32V531.5H1289.32V493.5H1277.32V452.5H1371.82V493.5Z";
+  const PATH_RED    = "M391.217 606H403.717V493.75H391.217V452.5H492.717C520.55 452.5 542.633 460.167 558.967 475.5C575.467 490.667 583.717 515.417 583.717 549.75C583.717 584.083 575.467 608.917 558.967 624.25C542.633 639.417 520.55 647 492.717 647H391.217V606ZM488.217 606C493.883 606 498.133 604.5 500.967 601.5C503.8 598.5 505.217 593.833 505.217 587.5V512C505.217 499.667 499.55 493.5 488.217 493.5H473.717V606H488.217ZM592.145 647V606H604.645V493.5H592.145V452.5H760.895V528H704.895V493.5H674.645V533H696.645V561.5H674.645V606H704.895V566.5H760.895V647H592.145ZM953.867 606H963.867V647H865.867V606H880.867L876.867 586H842.867L838.867 606H853.867V647H768.367V606H778.367L820.617 452.5H911.617L953.867 606ZM848.367 559.5H871.367L861.117 509.75H858.617L848.367 559.5ZM1128.25 513H1085.25V493.5H1069.25V606H1086.75V647H981.754V606H999.254V493.5H983.254V513H940.254V452.5H1128.25V513ZM1336.82 493.5H1324.32V606H1336.82V647H1242.32V606H1254.32V564.75H1219.32V606H1231.32V647H1136.82V606H1149.32V493.5H1136.82V452.5H1231.32V493.5H1219.32V531.5H1254.32V493.5H1242.32V452.5H1336.82V493.5Z";
+
+  // ─── BLOCK RECTS ────────────────────────────────────────────────────────────
+  const BLOCK_RECTS = [
+    {x:1240,y:467,w:63,h:28},{x:1088,y:489,w:63,h:28},{x:1167,y:461,w:63,h:28},
+    {x:1263,y:481,w:63,h:28},{x:1166,y:503,w:63,h:28},{x:1263,y:549,w:63,h:28},
+    {x:1247,y:573,w:69,h:28},{x:1146,y:591,w:63,h:28},{x:1084,y:485,w:63,h:28},
+    {x:1231,y:601,w:76,h:28},{x:1263,y:619,w:103,h:28},{x:1134,y:619,w:88,h:28},
+    {x:1159,y:568,w:77,h:28},{x:1147,y:540,w:124,h:28},{x:1272,y:521,w:63,h:28},
+    {x:1190,y:521,w:92,h:28},{x:1134,y:521,w:63,h:28},{x:1244,y:504,w:63,h:28},
+    {x:1152,y:485,w:63,h:28},{x:1295,y:453,w:63,h:28},{x:1115,y:453,w:63,h:28},
+    {x:1056,y:619,w:63,h:28},{x:971,y:605,w:63,h:28},{x:997,y:619,w:63,h:28},
+    {x:1017,y:577,w:63,h:28},{x:985,y:559,w:63,h:28},{x:997,y:532,w:63,h:28},
+    {x:1017,y:507,w:63,h:28},{x:990,y:481,w:63,h:28},{x:1006,y:591,w:63,h:28},
+    {x:927,y:453,w:142,h:28},{x:1056,y:462,w:63,h:28},
+    {x:777,y:594,w:63,h:28},{x:796,y:514,w:63,h:28},{x:777,y:538,w:63,h:28},
+    {x:867,y:587,w:83,h:28},{x:796,y:559,w:68,h:28},{x:790,y:476,w:63,h:28},
+    {x:898,y:531,w:63,h:28},{x:922,y:503,w:63,h:28},
+    {x:872,y:504,w:63,h:55},{x:872,y:476,w:63,h:28},
+    {x:875,y:619,w:110,h:28},{x:749,y:619,w:110,h:28},
+    {x:864,y:559,w:110,h:28},{x:800,y:453,w:110,h:28},
+    {x:493,y:500,w:61,h:28},{x:514,y:523,w:61,h:28},{x:362,y:453,w:150,h:28},
+    {x:488,y:548,w:72,h:28},{x:509,y:586,w:75,h:28},{x:369,y:573,w:84,h:28},
+    {x:391,y:547,w:77,h:28},{x:376,y:520,w:69,h:28},{x:334,y:467,w:83,h:28},
+    {x:404,y:495,w:81,h:28},{x:431,y:467,w:150,h:28},{x:404,y:614,w:150,h:28},
+    {x:325,y:619,w:150,h:28},
+    {x:622,y:580,w:62,h:28},{x:591,y:533,w:62,h:28},{x:566,y:619,w:62,h:28},
+    {x:560,y:505,w:62,h:28},{x:622,y:506,w:62,h:28},{x:581,y:519,w:62,h:28},
+    {x:570,y:467,w:62,h:28},{x:632,y:479,w:62,h:28},{x:700,y:500,w:62,h:28},
+    {x:738,y:566,w:62,h:28},{x:541,y:453,w:150,h:28},{x:714,y:577,w:63,h:28},
+    {x:570,y:559,w:104,h:28},{x:662,y:533,w:62,h:28},{x:541,y:605,w:150,h:28},
+    {x:640,y:467,w:150,h:28},{x:640,y:619,w:150,h:28},
+  ];
+
+  // ─── EASING ─────────────────────────────────────────────────────────────────
+  function easeInOut(t) { return t < 0.5 ? 2*t*t : -1 + (4-2*t)*t; }
+
+  // ─── GLOBALS ────────────────────────────────────────────────────────────────
+  let blocks = [];
+  let path2dShadow, path2dRed;
+
+  function getScale() {
+    return (width * 0.82) / (DESIGN_X2 - DESIGN_X1);
+  }
+
+  function toX(sx, sc) { return width/2  + (sx - DESIGN_CX) * sc; }
+  function toY(sy, sc) { return height/2 + (sy - DESIGN_CY) * sc; }
+
+  // ─── SETUP ──────────────────────────────────────────────────────────────────
+  function setup() {
+    let cnv = createCanvas(windowWidth, windowHeight);
+    cnv.style('position', 'fixed');
+    cnv.style('top', '0');
+    cnv.style('left', '0');
+    cnv.style('z-index', '-1');
+
+    path2dShadow = new Path2D(PATH_SHADOW);
+    path2dRed    = new Path2D(PATH_RED);
+
+    for (let i = 0; i < BLOCK_RECTS.length; i++) {
+      let b = BLOCK_RECTS[i];
+      let seed  = (i * 1.618033 + 0.5) % 1;
+      let seed2 = (i * 0.7071   + 0.3) % 1;
+      let scatterX = (seed  - 0.5) * 1200;
+      let scatterY = (seed2 - 0.5) *  300;
+      blocks.push({ ...b, scatterX, scatterY });
+    }
+  }
+
+  function windowResized() {
+    resizeCanvas(windowWidth, windowHeight);
+  }
+
+  // ─── DRAW LAYER ─────────────────────────────────────────────────────────────
+  function drawLayer(path2d, fillColor, layerOffX, layerOffY, sc, t) {
+    let ctx = drawingContext;
+    for (let b of blocks) {
+      let dispX = b.scatterX * t * sc;
+      let dispY = b.scatterY * t * sc;
+
+      let bx = toX(b.x + layerOffX, sc) + dispX;
+      let by = toY(b.y + layerOffY, sc) + dispY;
+      let bw = b.w * sc;
+      let bh = b.h * sc;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(bx, by, bw, bh);
+      ctx.clip();
+
+      let ox = width/2  - DESIGN_CX * sc + layerOffX * sc + dispX;
+      let oy = height/2 - DESIGN_CY * sc + layerOffY * sc + dispY;
+      ctx.translate(ox, oy);
+      ctx.scale(sc, sc);
+      ctx.fillStyle = fillColor;
+      ctx.fill(path2d);
+      ctx.restore();
+    }
+  }
+
+  // ─── DRAW ───────────────────────────────────────────────────────────────────
+  function draw() {
+    background(0);
+
+    let sc = getScale();
+    let mx = constrain(mouseX / width, 0, 1);
+    let t  = easeInOut(mx);
+
+    drawLayer(path2dShadow, '#180C31', 35, 35, sc, t);
+    drawLayer(path2dRed,    '#ED0010',  0,  0, sc, t);
+  }
+</script>
+</body>
+
+</html>
