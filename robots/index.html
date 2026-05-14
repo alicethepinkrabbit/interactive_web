@@ -20,11 +20,13 @@
   <div id="robot-sketch" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;"></div>
 
   <script src="../js/p5.min-2.js"></script>
-  <script>
+```html
+<script>
 document.fonts.ready.then(() => {
   new p5(function(p) {
     let W, H, CX, CY, SC;
     let letters = [];
+    let meltDrops = [];
     let progress = 0;
 
     const DEG = Math.PI / 180;
@@ -35,7 +37,6 @@ document.fonts.ready.then(() => {
       CX = W / 2;
       CY = H / 2;
 
-      // reference file size: 1728 x 1117
       SC = Math.min(W / 1728, H / 1117);
 
       const bigSz = 250 * SC;
@@ -52,84 +53,143 @@ document.fonts.ready.then(() => {
       }
 
       letters = [
-  {
-    ch: 'R',
-    font: 'Archivo Black',
-    ax: sx(920),
-    ay: sy(590),
-    aRot: 0,
-    aSz: 390 * SC,
-    bx: wordX0 + charW * 0 + 90 * SC,
-    by: wordY,
-    bRot: 0,
-    bSz: 250 * SC,
-  },
+        {
+          ch: 'R',
+          font: 'Archivo Black',
+          ax: sx(920),
+          ay: sy(590),
+          aRot: 0,
+          aSz: 390 * SC,
+          bx: wordX0 + charW * 0 + 90 * SC,
+          by: wordY,
+          bRot: 0,
+          bSz: 250 * SC,
+        },
+        {
+          ch: 'o',
+          font: 'BBH Bartle',
+          ax: sx(700),
+          ay: sy(600),
+          aRot: -55 * DEG,
+          aSz: 250 * SC,
+          bx: wordX0 + charW * 1 + 80 * SC,
+          by: wordY,
+          bRot: 0,
+          bSz: 250 * SC,
+        },
+        {
+          ch: 'B',
+          font: 'Bayon',
+          ax: sx(875),
+          ay: sy(410),
+          aRot: 90 * DEG,
+          aSz: 240 * SC,
+          bx: wordX0 + charW * 2 + 70 * SC,
+          by: wordY + 30 * SC,
+          bRot: 0,
+          bSz: 265 * SC,
+        },
+        {
+          ch: 'O',
+          font: 'Alfa Slab One',
+          ax: sx(1180),
+          ay: sy(620),
+          aRot: -10 * DEG,
+          aSz: 125 * SC,
+          bx: wordX0 + charW * 3,
+          by: wordY + 10 * SC,
+          bRot: 0,
+          bSz: 250 * SC,
+        },
+        {
+          ch: 'T',
+          font: 'Coda Caption',
+          ax: sx(560),
+          ay: sy(660),
+          aRot: -90 * DEG,
+          aSz: 210 * SC,
+          bx: wordX0 + charW * 4 - 80 * SC,
+          by: wordY + 10 * SC,
+          bRot: 0,
+          bSz: 250 * SC,
+        },
+        {
+          ch: 'S',
+          font: 'Freeman',
+          ax: sx(1080),
+          ay: sy(570),
+          aRot: -35 * DEG,
+          aSz: 235 * SC,
+          bx: wordX0 + charW * 5 - 180 * SC,
+          by: wordY,
+          bRot: 0,
+          bSz: 250 * SC,
+        },
+      ];
+    }
 
-  {
-    ch: 'o',
-    font: 'BBH Bartle',
-    ax: sx(700),
-    ay: sy(600),
-    aRot: -55 * DEG,
-    aSz: 250 * SC,
-    bx: wordX0 + charW * 1 + 80 * SC,
-    by: wordY,
-    bRot: 0,
-    bSz: 250 * SC,
-  },
+    function buildMeltDrops() {
+      meltDrops = [];
 
-  {
-    ch: 'B',
-    font: 'Bayon',
-    ax: sx(875),
-    ay: sy(410),
-    aRot: 90 * DEG,
-    aSz: 240 * SC,
-    bx: wordX0 + charW * 2 + 70 * SC,
-    by: wordY + 30 * SC,
-    bRot: 0,
-    bSz: 265 * SC,
-  },
+      for (let i = 0; i < 95; i++) {
+        meltDrops.push({
+          x: p.random(W),
+          y: p.random(-150, H * 0.35),
+          w: p.random(2, 12),
+          h: p.random(80, 420),
+          speed: p.random(0.3, 1.8),
+          alpha: p.random(35, 125),
+          wobble: p.random(1000),
+          col: p.random([
+            [255, 0, 180],
+            [0, 255, 220],
+            [255, 245, 220],
+            [120, 60, 255],
+            [0, 0, 0]
+          ])
+        });
+      }
+    }
 
-  {
-    ch: 'O',
-    font: 'Alfa Slab One',
-    ax: sx(1180),
-    ay: sy(620),
-    aRot: -10 * DEG,
-    aSz: 125 * SC,
-    bx: wordX0 + charW * 3,
-    by: wordY + 10 * SC,
-    bRot: 0,
-    bSz: 250 * SC,
-  },
+    function drawMeltEffect() {
+      p.noStroke();
 
-  {
-    ch: 'T',
-    font: 'Coda Caption',
-    ax: sx(560),
-    ay: sy(660),
-    aRot: -90 * DEG,
-    aSz: 210 * SC,
-    bx: wordX0 + charW * 4 - 80 * SC,
-    by: wordY + 10 * SC,
-    bRot: 0,
-    bSz: 250 * SC,
-  },
+      for (let d of meltDrops) {
+        let wave = Math.sin(p.frameCount * 0.03 + d.wobble) * 4;
 
-  {
-    ch: 'S',
-    font: 'Freeman',
-    ax: sx(1080),
-    ay: sy(570),
-    aRot: -35 * DEG,
-    aSz: 235 * SC,
-    bx: wordX0 + charW * 5 - 180 * SC,
-    by: wordY,
-    bRot: 0,
-    bSz: 250 * SC,
-  },
-];
+        p.fill(d.col[0], d.col[1], d.col[2], d.alpha);
+        p.rect(d.x + wave, d.y, d.w, d.h);
+
+        p.fill(0, d.alpha * 0.45);
+        p.rect(d.x + wave + d.w * 0.3, d.y + 10, d.w * 0.4, d.h * 0.9);
+
+        for (let j = 0; j < 3; j++) {
+          p.fill(d.col[0], d.col[1], d.col[2], d.alpha + 40);
+          p.rect(
+            d.x + wave + p.random(-8, 8),
+            d.y + p.random(d.h),
+            d.w + p.random(3, 18),
+            p.random(4, 18)
+          );
+        }
+
+        d.y += d.speed;
+
+        if (d.y > H + d.h) {
+          d.y = p.random(-250, -40);
+          d.x = p.random(W);
+          d.h = p.random(80, 420);
+        }
+      }
+    }
+
+    function drawGrain() {
+      p.noStroke();
+
+      for (let i = 0; i < 500; i++) {
+        p.fill(255, p.random(5, 22));
+        p.rect(p.random(W), p.random(H), 1.5, 1.5);
+      }
     }
 
     function easeInOut(t) {
@@ -144,12 +204,17 @@ document.fonts.ready.then(() => {
 
     p.setup = function() {
       buildLetters();
+      buildMeltDrops();
+
       let cnv = p.createCanvas(W, H);
       cnv.parent('robot-sketch');
     };
 
     p.draw = function() {
-      p.background(47, 71, 71);
+      p.background(25, 35, 36);
+
+      drawMeltEffect();
+      drawGrain();
 
       let target = p.constrain(p.mouseY / H, 0, 1);
       progress = p.lerp(progress, target, 0.07);
@@ -163,26 +228,59 @@ document.fonts.ready.then(() => {
         let rot = p.lerp(lt.aRot, lt.bRot, t);
         let sz = p.lerp(lt.aSz, lt.bSz, t);
 
+        if (p.frameCount % 9 < 3) {
+          p.push();
+          p.translate(cx + p.random(-5, 5), cy);
+          p.rotate(rot);
+          p.textFont(lt.font);
+          p.textSize(sz);
+          p.textAlign(p.CENTER, p.CENTER);
+          p.fill(255, 0, 180, 75);
+          p.noStroke();
+          p.text(lt.ch, 0, 0);
+          p.pop();
+
+          p.push();
+          p.translate(cx + p.random(-5, 5), cy);
+          p.rotate(rot);
+          p.textFont(lt.font);
+          p.textSize(sz);
+          p.textAlign(p.CENTER, p.CENTER);
+          p.fill(0, 255, 220, 65);
+          p.noStroke();
+          p.text(lt.ch, 0, 0);
+          p.pop();
+        }
+
         p.push();
         p.translate(cx, cy);
         p.rotate(rot);
         p.textFont(lt.font);
         p.textSize(sz);
         p.textAlign(p.CENTER, p.CENTER);
-        p.fill(255);
+        p.fill(245, 238, 215);
         p.noStroke();
         p.text(lt.ch, 0, 0);
         p.pop();
+      }
+
+      p.stroke(255, 16);
+      p.strokeWeight(1);
+      for (let y = 0; y < H; y += 6) {
+        p.line(0, y, W, y);
       }
     };
 
     p.windowResized = function() {
       buildLetters();
+      buildMeltDrops();
       p.resizeCanvas(W, H);
     };
   });
 });
 </script>
+```
+
 
 </body>
 </html>
